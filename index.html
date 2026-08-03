@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="医药行业及细分类目PE-TTM与最近十年估值百分位看板">
+  <title>医药估值温度计</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <p class="eyebrow">PHARMA VALUATION</p>
+      <h1>医药估值温度计</h1>
+      <p class="lede">用同一把尺子，看医药行业与细分赛道当前处在历史什么位置。</p>
+      <div id="status" class="data-status" role="status" aria-live="polite">正在读取最新数据…</div>
+    </div>
+  </header>
+
+  <main>
+    <section aria-labelledby="overview-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">MARKET SNAPSHOT</p>
+          <h2 id="overview-title">今日概览</h2>
+        </div>
+        <p id="coverage" class="coverage"></p>
+      </div>
+      <div id="overview" class="overview-grid" aria-live="polite"></div>
+    </section>
+
+    <section aria-labelledby="categories-title">
+      <div class="section-heading category-heading">
+        <div>
+          <p class="section-kicker">SECTOR VIEW</p>
+          <h2 id="categories-title">行业与细分类目</h2>
+        </div>
+        <label class="sort-label" for="sort-select">排序
+          <select id="sort-select">
+            <option value="category">按类目</option>
+            <option value="percentile-asc">百分位从低到高</option>
+            <option value="percentile-desc">百分位从高到低</option>
+          </select>
+        </label>
+      </div>
+      <p class="tap-hint">有历史数据的卡片可点开查看十年PE走势。</p>
+      <div id="category-grid" class="category-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="methodology" class="methodology" aria-labelledby="methodology-title">
+      <p class="section-kicker">METHODOLOGY</p>
+      <h2 id="methodology-title">口径与数据说明</h2>
+      <div class="method-grid">
+        <article>
+          <h3>估值口径</h3>
+          <p>统一采用整体法PE-TTM，与支付宝指数估值展示口径交叉核对。它不同于剔除亏损股后的算术平均PE，因此数值可能与部分行情软件不同。</p>
+        </article>
+        <article>
+          <h3>十年百分位</h3>
+          <p>统计最近十年日频有效PE中，小于或等于当前PE的样本占比。指数成立不足十年时，按成立以来计算。</p>
+        </article>
+        <article>
+          <h3>缺失与参考项</h3>
+          <p>CXO、中证疫苗与生物技术暂无同口径公开历史，明确标为暂缺；申万医疗服务与医药商业采用经逐日交叉核对一致的申万整体法PE，参考指数只作辅助观察。</p>
+        </article>
+      </div>
+      <p class="source-note">数据优先采用中证指数；估值历史来自FundDB及申万宏源研究公开接口。数据可能延迟或短暂中断，页面会保留最近一次成功快照并标注状态。</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>仅供估值观察与学习，不构成任何投资建议。指数估值不代表基金买卖时点，也不保证未来收益。</p>
+  </footer>
+
+  <dialog id="chart-drawer" aria-labelledby="chart-title">
+    <div class="drawer-head">
+      <div>
+        <p id="chart-meta" class="chart-meta"></p>
+        <h2 id="chart-title">历史PE走势</h2>
+      </div>
+      <button id="chart-close" class="close-button" type="button" aria-label="关闭历史走势图">关闭</button>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="history-chart" role="img" aria-label="所选指数最近十年PE历史折线图"></canvas>
+      <div id="chart-tooltip" class="chart-tooltip" hidden></div>
+    </div>
+    <p id="chart-summary" class="chart-summary"></p>
+  </dialog>
+
+  <noscript>请启用JavaScript查看估值数据。</noscript>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

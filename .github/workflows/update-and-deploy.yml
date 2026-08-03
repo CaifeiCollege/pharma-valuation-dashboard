@@ -1,0 +1,79 @@
+name: 更新医药估值并发布
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "30 10 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pharma-valuation-pages
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 读取仓库
+        uses: actions/checkout@v4
+
+      - name: 准备Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 安装数据更新依赖
+        run: python -m pip install -r requirements.txt
+
+      - name: 先运行完整测试
+        run: python -m unittest discover -s tests -v
+
+      - name: 更新估值快照（接口失败时自动沿用旧值）
+        id: update
+        shell: bash
+        run: |
+          UPDATE_SUMMARY="$(python scripts/update_data.py --output data/valuations.json --fallback data/valuations.last-good.json)"
+          echo "$UPDATE_SUMMARY"
+          echo "summary=$UPDATE_SUMMARY" >> "$GITHUB_OUTPUT"
+
+      - name: 输出可读诊断摘要
+        shell: bash
+        run: |
+          echo "## 医药估值数据更新结果" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ${{ steps.update.outputs.summary }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- current=本次成功；stale=沿用上次；unavailable=同口径暂缺" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 保存更新后的数据
+        shell: bash
+        run: |
+          if ! git diff --quiet -- data/valuations.json data/valuations.last-good.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/valuations.json data/valuations.last-good.json
+            git commit -m "data: update pharmaceutical valuations"
+            git push
+          else
+            echo "数据文件没有变化，无需提交。"
+          fi
+
+      - name: 配置GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 上传静态网站
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: 发布GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
