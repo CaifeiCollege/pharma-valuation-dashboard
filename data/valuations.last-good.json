@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-03T03:10:24.885474Z",
+  "generated_at": "2026-08-03T03:21:18.324834Z",
   "methodology": {
     "pe": "整体法PE-TTM（与支付宝指数估值口径交叉核对）",
     "percentile": "最近十年日频有效PE中，小于或等于当前PE的样本占比；成立不足十年按成立以来。"
